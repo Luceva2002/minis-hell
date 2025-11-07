@@ -23,7 +23,7 @@
  * Questa funzione gestisce tutto il flusso di elaborazione:
  * 1. LEXER: Tokenizza la linea di input
  * 2. VALIDATOR: Verifica la correttezza sintattica
- * 3. PARSER: Costruisce l'Abstract Syntax Tree
+ * 3. PARSER: Costruisce l'Abstract Syntax Tree (albero binario)
  * 4. (TODO) EXECUTOR: Esegue i comandi dall'AST
  * 
  * In caso di errore in qualsiasi fase, libera la memoria allocata
