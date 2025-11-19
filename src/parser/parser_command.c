@@ -6,7 +6,7 @@
 /*   By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 00:00:00 by luevange          #+#    #+#             */
-/*   Updated: 2025/11/02 00:00:00 by luevange         ###   ########.fr       */
+/*   Updated: 2025/11/16 00:49:48 by luevange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,11 @@ static int	get_redir_status(t_token_type type)
 	return (-1);
 }
 
-static int	handle_redirect(t_token **tokens, int *pos, t_command *cmd)
+static int	handle_redirect(t_token **tokens, int *pos, t_command *cmd,
+				t_shell_context *ctx)
 {
 	t_redirect	*redir;
+	char		*processed;
 
 	redir = malloc(sizeof(t_redirect));
 	if (!redir)
@@ -42,7 +44,8 @@ static int	handle_redirect(t_token **tokens, int *pos, t_command *cmd)
 	(*pos)++;
 	if (!tokens[*pos] || tokens[*pos]->type != TOKEN_WORD)
 		return (free(redir), 0);
-	redir->filename = ft_strdup(tokens[*pos]->value);
+	processed = process_token_value(tokens[*pos]->value, ctx);
+	redir->filename = processed;
 	if (!redir->filename)
 		return (free(redir), 0);
 	if (!cmd_add_redirect(cmd, redir))
@@ -51,23 +54,32 @@ static int	handle_redirect(t_token **tokens, int *pos, t_command *cmd)
 	return (1);
 }
 
-static int	process_token(t_token **tokens, int *pos, t_command *cmd)
+static int	process_token(t_token **tokens, int *pos, t_command *cmd,
+				t_shell_context *ctx)
 {
+	char	*processed;
+
 	if (tokens[*pos]->type == TOKEN_WORD)
 	{
-		if (!cmd_add_argument(cmd, tokens[*pos]->value))
+		processed = process_token_value(tokens[*pos]->value, ctx);
+		if (!processed || !cmd_add_argument(cmd, processed))
+		{
+			free(processed);
 			return (0);
+		}
+		free(processed);
 		(*pos)++;
 	}
 	else
 	{
-		if (!handle_redirect(tokens, pos, cmd))
+		if (!handle_redirect(tokens, pos, cmd, ctx))
 			return (0);
 	}
 	return (1);
 }
 
-t_ast_node	*parse_redir_and_cmd(t_token **tokens, int *pos)
+t_ast_node	*parse_redir_and_cmd(t_token **tokens, int *pos,
+				t_shell_context *ctx)
 {
 	t_ast_node	*node;
 
@@ -80,9 +92,8 @@ t_ast_node	*parse_redir_and_cmd(t_token **tokens, int *pos)
 	while (tokens[*pos] && (tokens[*pos]->type == TOKEN_WORD
 			|| is_redirect_token(tokens[*pos]->type)))
 	{
-		if (!process_token(tokens, pos, node->cmd))
+		if (!process_token(tokens, pos, node->cmd, ctx))
 			return (ast_node_free(node), NULL);
 	}
 	return (node);
 }
-

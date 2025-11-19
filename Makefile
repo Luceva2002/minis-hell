@@ -6,7 +6,7 @@
 #    By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/26 18:40:00 by luevange          #+#    #+#              #
-#    Updated: 2025/11/03 01:15:00 by luevange         ###   ########.fr        #
+#    Updated: 2025/11/10 15:28:14 by luevange         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,10 @@ INCLUDES	= -I./includes -I./$(UTILS_DIR)/includes
 LEXER_DIR	= $(SRC_DIR)/lexer
 PARSER_DIR	= $(SRC_DIR)/parser
 VALIDATE_DIR = $(SRC_DIR)/validate
+EXECUTOR_DIR = $(SRC_DIR)/executor
+ENV_DIR		= $(SRC_DIR)/handle_env
+BUILTIN_DIR	= $(SRC_DIR)/built-in
+UTILS_SRC_DIR = $(SRC_DIR)/utils
 
 # Source files
 SRCS		= $(SRC_DIR)/minishell.c \
@@ -46,7 +50,23 @@ SRCS		= $(SRC_DIR)/minishell.c \
 			  $(PARSER_DIR)/parser_redir.c \
 			  $(PARSER_DIR)/parser_primary.c \
 			  $(PARSER_DIR)/parser_command.c \
-			  $(PARSER_DIR)/parser_free.c
+			  $(PARSER_DIR)/parser_free.c \
+			  $(EXECUTOR_DIR)/executor.c \
+			  $(EXECUTOR_DIR)/execute_command.c \
+			  $(EXECUTOR_DIR)/execute_pipe.c \
+			  $(EXECUTOR_DIR)/redirections.c \
+			  $(ENV_DIR)/env_init.c \
+			  $(ENV_DIR)/env_utils.c \
+			  $(BUILTIN_DIR)/builtin_utils.c \
+			  $(BUILTIN_DIR)/builtin_echo.c \
+			  $(BUILTIN_DIR)/builtin_cd.c \
+			  $(BUILTIN_DIR)/builtin_pwd.c \
+			  $(BUILTIN_DIR)/builtin_export.c \
+			  $(BUILTIN_DIR)/builtin_unset.c \
+			  $(BUILTIN_DIR)/builtin_env.c \
+			  $(BUILTIN_DIR)/builtin_exit.c \
+			  $(UTILS_SRC_DIR)/expand.c \
+			  $(UTILS_SRC_DIR)/signals.c
 
 # Object files (tutti nella cartella obj/)
 OBJS		= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))

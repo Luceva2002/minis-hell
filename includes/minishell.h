@@ -6,7 +6,7 @@
 /*   By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 18:22:19 by luevange          #+#    #+#             */
-/*   Updated: 2025/11/03 01:20:00 by luevange         ###   ########.fr       */
+/*   Updated: 2025/11/08 22:01:48 by luevange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,24 @@ typedef struct s_ast_node
 }	t_ast_node;
 
 /* ========================================================================== */
+/*                        ENVIRONMENT DEFINITIONS                            */
+/* ========================================================================== */
+
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+}	t_env;
+
+typedef struct s_shell_context
+{
+	t_env	*env;
+	int		last_exit_code;
+	int		running;
+}	t_shell_context;
+
+/* ========================================================================== */
 /*                           LEXER FUNCTIONS                                 */
 /* ========================================================================== */
 
@@ -153,12 +171,13 @@ void		syntax_print_error(int error_code);
  * parse_primary            - Parsing espressioni primarie e subshell
  * parse_redir_and_cmd      - Parsing comando con redirect
  */
-t_ast_node	*parse(t_token **tokens);
-t_ast_node	*parse_or(t_token **tokens, int *pos);
-t_ast_node	*parse_and(t_token **tokens, int *pos);
-t_ast_node	*parse_pipe(t_token **tokens, int *pos);
-t_ast_node	*parse_primary(t_token **tokens, int *pos);
-t_ast_node	*parse_redir_and_cmd(t_token **tokens, int *pos);
+t_ast_node	*parse(t_token **tokens, t_shell_context *ctx);
+t_ast_node	*parse_or(t_token **tokens, int *pos, t_shell_context *ctx);
+t_ast_node	*parse_and(t_token **tokens, int *pos, t_shell_context *ctx);
+t_ast_node	*parse_pipe(t_token **tokens, int *pos, t_shell_context *ctx);
+t_ast_node	*parse_primary(t_token **tokens, int *pos, t_shell_context *ctx);
+t_ast_node	*parse_redir_and_cmd(t_token **tokens, int *pos,
+			t_shell_context *ctx);
 
 /**
  * CREAZIONE NODI AST
@@ -173,5 +192,104 @@ void		ast_node_free(t_ast_node *node);
 t_command	*cmd_node_create(void);
 int			cmd_add_argument(t_command *cmd, char *arg);
 int			cmd_add_redirect(t_command *cmd, t_redirect *redir);
+
+/* ========================================================================== */
+/*                        ENVIRONMENT FUNCTIONS                              */
+/* ========================================================================== */
+
+/**
+ * GESTIONE ENVIRONMENT
+ * env_init         - Inizializza environment da envp
+ * env_get          - Ottiene valore di una variabile
+ * env_set          - Imposta/aggiorna una variabile
+ * env_unset        - Rimuove una variabile
+ * env_to_array     - Converte lista in array per execve
+ * env_free         - Libera tutto l'environment
+ */
+t_env		*env_init(char **envp);
+char		*env_get(char *key, t_env *env);
+int			env_set(t_env **env, char *key, char *value);
+int			env_unset(t_env **env, char *key);
+char		**env_to_array(t_env *env);
+void		env_free(t_env *env);
+
+/* ========================================================================== */
+/*                         EXECUTOR FUNCTIONS                                */
+/* ========================================================================== */
+
+/**
+ * ESECUZIONE
+ * execute                  - Punto di ingresso executor
+ * execute_simple_command   - Esegue comando singolo
+ * execute_pipe             - Esegue pipeline
+ * execute_and              - Esegue operatore &&
+ * execute_or               - Esegue operatore ||
+ */
+int			execute(t_ast_node *ast, t_shell_context *ctx);
+int			execute_simple_command(t_ast_node *node, t_shell_context *ctx);
+int			execute_pipe(t_ast_node *node, t_shell_context *ctx);
+int			execute_and(t_ast_node *node, t_shell_context *ctx);
+int			execute_or(t_ast_node *node, t_shell_context *ctx);
+
+/**
+ * COMANDI ESTERNI
+ * execute_external_command - Fork + execve per comando esterno
+ * find_executable_in_path  - Cerca comando nel PATH
+ */
+int			execute_external_command(t_command *cmd, t_shell_context *ctx);
+char		*find_executable_in_path(char *cmd_name, t_env *env);
+
+/**
+ * REDIRECTIONS
+ * apply_redirections       - Applica tutte le redirections
+ * apply_input_redirect     - Redirect input <
+ * apply_output_redirect    - Redirect output > o >>
+ * apply_heredoc            - Heredoc <<
+ */
+int			apply_redirections(t_redirect **redirects);
+int			apply_input_redirect(char *filename);
+int			apply_output_redirect(char *filename, int append);
+int			apply_heredoc(char *delimiter);
+
+/**
+ * BUILT-IN COMMANDS
+ * is_builtin               - Controlla se è un built-in
+ * execute_builtin          - Esegue built-in
+ */
+int			is_builtin(char *cmd);
+int			execute_builtin(t_command *cmd, t_shell_context *ctx);
+int			builtin_echo(char **args);
+int			builtin_cd(char **args, t_shell_context *ctx);
+int			builtin_pwd(void);
+int			builtin_export(char **args, t_shell_context *ctx);
+int			builtin_unset(char **args, t_shell_context *ctx);
+int			builtin_env(t_shell_context *ctx);
+int			builtin_exit(char **args, t_shell_context *ctx);
+
+/* ========================================================================== */
+/*                         EXPANSION & UTILS                                 */
+/* ========================================================================== */
+
+/**
+ * EXPANSION FUNCTIONS
+ * remove_quotes            - Rimuove quote da una stringa
+ * expand_variables         - Espande $VAR e $?
+ * process_token_value      - Processa token: rimuove quote ed espande
+ */
+char		*remove_quotes(char *str);
+char		*expand_variables(char *str, t_shell_context *ctx, int in_quotes);
+char		*process_token_value(char *value, t_shell_context *ctx);
+
+/* ========================================================================== */
+/*                         SIGNAL HANDLING                                   */
+/* ========================================================================== */
+
+/**
+ * SIGNAL MANAGEMENT
+ * setup_signals            - Configura gestione segnali
+ * handle_sigint            - Gestore per Ctrl+C
+ */
+void		setup_signals(void);
+void		handle_sigint(int sig);
 
 #endif
