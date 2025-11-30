@@ -6,7 +6,7 @@
 /*   By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/26 18:40:00 by luevange          #+#    #+#             */
-/*   Updated: 2025/11/03 01:25:00 by luevange         ###   ########.fr       */
+/*   Updated: 2025/11/30 21:24:44 by luevange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static int	char_is_space(char c)
 static int	char_is_operator(char c)
 {
 	return (c == '|' || c == '<' || c == '>' || c == '&'
-		|| c == '(' || c == ')');
+		|| c == '(' || c == ')' || c == ';');
 }
 
 /* ========================================================================== */
@@ -50,9 +50,13 @@ static int	char_is_operator(char c)
  * 
  * Questa funzione:
  * 1. Salta gli spazi bianchi
- * 2. Determina il tipo di token (quote, operatore, o parola)
+ * 2. Determina il tipo di token (operatore o parola/quote)
  * 3. Chiama la funzione appropriata per leggere il token
  * 4. Crea e restituisce il token con il tipo corretto
+ * 
+ * Le quote sono ora gestite da read_word per supportare casi come:
+ * - "hello"world (parola singola)
+ * - hello"world"test (parola singola)
  * 
  * Return: Il token letto, o NULL se non ci sono più token
  */
@@ -60,22 +64,27 @@ static t_token	*get_next_token(const char *s, int *i)
 {
 	t_token_type	type;
 	char			*value;
+	t_token			*tok;
 
 	while (s[*i] && char_is_space(s[*i]))
 		(*i)++;
 	if (!s[*i])
 		return (NULL);
-	if (s[*i] == '\'' || s[*i] == '"')
-		value = read_quoted(s, i);
-	else if (char_is_operator(s[*i]))
+	if (char_is_operator(s[*i]))
+	{
 		value = read_operator(s, i, &type);
-	else
-		value = read_word(s, i);
+		if (!value)
+			return (NULL);
+		tok = token_create(type, value);
+		free(value);
+		return (tok);
+	}
+	value = read_word(s, i);
 	if (!value)
 		return (NULL);
-	if (char_is_operator(value[0]))
-		return (token_create(type, value));
-	return (token_create(TOKEN_WORD, value));
+	tok = token_create(TOKEN_WORD, value);
+	free(value);
+	return (tok);
 }
 
 /* ========================================================================== */

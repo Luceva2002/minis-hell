@@ -6,7 +6,7 @@
 /*   By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 18:22:19 by luevange          #+#    #+#             */
-/*   Updated: 2025/11/08 22:01:48 by luevange         ###   ########.fr       */
+/*   Updated: 2025/11/30 21:24:44 by luevange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 # include <limits.h>
+# include <signal.h>
 # include "../utils/includes/libft.h"
 # include "../utils/includes/ft_printf.h"
 
@@ -52,7 +53,8 @@ typedef enum e_token_type
 	TOKEN_AND,
 	TOKEN_OR,
 	TOKEN_LPAREN,
-	TOKEN_RPAREN
+	TOKEN_RPAREN,
+	TOKEN_SEMICOLON
 }	t_token_type;
 
 typedef struct s_token
@@ -74,7 +76,8 @@ typedef enum e_node_type
 	NODE_PIPE,
 	NODE_AND,
 	NODE_OR,
-	NODE_SUBSHELL
+	NODE_SUBSHELL,
+	NODE_SEQ
 }	t_node_type;
 
 typedef struct s_redirect
@@ -285,11 +288,22 @@ char		*process_token_value(char *value, t_shell_context *ctx);
 /* ========================================================================== */
 
 /**
+ * GLOBAL VARIABLE
+ * g_signal - Unica variabile globale consentita dal subject
+ * Memorizza il numero del segnale ricevuto (usata per exit status)
+ */
+extern volatile sig_atomic_t	g_signal;
+
+/**
  * SIGNAL MANAGEMENT
  * setup_signals            - Configura gestione segnali
+ * setup_signals_child      - Segnali per processo figlio
+ * setup_signals_heredoc    - Segnali per heredoc
  * handle_sigint            - Gestore per Ctrl+C
  */
 void		setup_signals(void);
+void		setup_signals_child(void);
+void		setup_signals_heredoc(void);
 void		handle_sigint(int sig);
 
 #endif

@@ -83,6 +83,7 @@ static void	update_pwd_vars(char *old_pwd, t_shell_context *ctx)
  * @ctx: Contesto della shell
  * 
  * Cambia la directory corrente e aggiorna PWD e OLDPWD.
+ * bash ignora argomenti extra, ma alcuni test potrebbero verificarlo.
  * 
  * Return: 0 in caso di successo, 1 in caso di errore
  */

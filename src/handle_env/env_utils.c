@@ -162,6 +162,24 @@ static int	env_count(t_env *env)
 }
 
 /**
+ * free_envp_partial - Libera un array parzialmente riempito
+ * @envp: Array da liberare
+ * @count: Numero di elementi da liberare
+ */
+static void	free_envp_partial(char **envp, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		free(envp[i]);
+		i++;
+	}
+	free(envp);
+}
+
+/**
  * env_to_array - Converte la lista env in array di stringhe per execve
  * @env: Lista delle variabili d'ambiente
  * 
@@ -184,11 +202,11 @@ char	**env_to_array(t_env *env)
 	{
 		tmp = ft_strjoin(env->key, "=");
 		if (!tmp)
-			return (NULL);
+			return (free_envp_partial(envp, i), NULL);
 		envp[i] = ft_strjoin(tmp, env->value);
 		free(tmp);
 		if (!envp[i])
-			return (NULL);
+			return (free_envp_partial(envp, i), NULL);
 		env = env->next;
 		i++;
 	}

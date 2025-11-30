@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <signal.h>
 
 /* ========================================================================== */
 /*                          PIPE EXECUTION HELPERS                           */
@@ -27,6 +28,7 @@
 static void	execute_left_pipe(t_ast_node *node, int pipe_fd[2],
 				t_shell_context *ctx)
 {
+	setup_signals_child();
 	close(pipe_fd[0]);
 	if (dup2(pipe_fd[1], STDOUT_FILENO) < 0)
 	{
@@ -48,6 +50,7 @@ static void	execute_left_pipe(t_ast_node *node, int pipe_fd[2],
 static void	execute_right_pipe(t_ast_node *node, int pipe_fd[2],
 				t_shell_context *ctx)
 {
+	setup_signals_child();
 	close(pipe_fd[1]);
 	if (dup2(pipe_fd[0], STDIN_FILENO) < 0)
 	{
@@ -105,6 +108,14 @@ int	execute_pipe(t_ast_node *node, t_shell_context *ctx)
 	close(pipe_fd[1]);
 	waitpid(pid_left, &status, 0);
 	waitpid(pid_right, &status, 0);
+	if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGINT)
+			return (write(1, "\n", 1), 130);
+		if (WTERMSIG(status) == SIGQUIT)
+			return (ft_putendl_fd("Quit: 3", 2), 131);
+		return (128 + WTERMSIG(status));
+	}
 	if (WIFEXITED(status))
 		exit_status = WEXITSTATUS(status);
 	else

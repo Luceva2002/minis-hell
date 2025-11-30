@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <signal.h>
 
 /* ========================================================================== */
 /*                         PATH RESOLUTION                                   */
@@ -25,6 +26,25 @@
 static int	is_path(char *cmd)
 {
 	return (ft_strchr(cmd, '/') != NULL);
+}
+
+/**
+ * free_dirs_array - Libera un array di directory
+ * @dirs: Array da liberare
+ */
+static void	free_dirs_array(char **dirs)
+{
+	int	i;
+
+	if (!dirs)
+		return ;
+	i = 0;
+	while (dirs[i])
+	{
+		free(dirs[i]);
+		i++;
+	}
+	free(dirs);
 }
 
 /**
@@ -58,14 +78,15 @@ char	*find_executable_in_path(char *cmd_name, t_env *env)
 		full_path = ft_strjoin(tmp, cmd_name);
 		free(tmp);
 		if (access(full_path, X_OK) == 0)
+		{
+			free_dirs_array(dirs);
 			return (full_path);
+		}
 		free(full_path);
 		i++;
 	}
-	i = -1;
-	while (dirs[++i])
-		free(dirs[i]);
-	return (free(dirs), NULL);
+	free_dirs_array(dirs);
+	return (NULL);
 }
 
 /**
@@ -108,6 +129,7 @@ static void	execute_in_child(t_command *cmd, char *executable_path,
 {
 	char	**envp;
 
+	setup_signals_child();
 	if (cmd->redirect)
 	{
 		if (!apply_redirections(cmd->redirect))
@@ -161,6 +183,14 @@ int	execute_external_command(t_command *cmd, t_shell_context *ctx)
 		execute_in_child(cmd, executable_path, ctx);
 	free(executable_path);
 	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGINT)
+			return (write(1, "\n", 1), 130);
+		if (WTERMSIG(status) == SIGQUIT)
+			return (ft_putendl_fd("Quit: 3", 2), 131);
+		return (128 + WTERMSIG(status));
+	}
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	return (1);

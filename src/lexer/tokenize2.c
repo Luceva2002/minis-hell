@@ -6,7 +6,7 @@
 /*   By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/26 18:40:00 by luevange          #+#    #+#             */
-/*   Updated: 2025/11/03 01:25:00 by luevange         ###   ########.fr       */
+/*   Updated: 2025/11/30 21:24:44 by luevange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ char	*read_quoted(const char *s, int *i)
  * @type: Puntatore al tipo da impostare
  * 
  * Analizza la stringa dell'operatore e imposta il tipo corrispondente.
- * Gestisce operatori a 1 e 2 caratteri (|, ||, <, <<, >, >>, &, &&, (, ))
+ * Gestisce operatori a 1 e 2 caratteri (|, ||, <, <<, >, >>, &, &&, (, ), ;)
  */
 static void	set_operator_type(const char *val, t_token_type *type)
 {
@@ -122,6 +122,8 @@ static void	set_operator_type(const char *val, t_token_type *type)
 		*type = TOKEN_LPAREN;
 	else if (val[0] == ')')
 		*type = TOKEN_RPAREN;
+	else if (val[0] == ';')
+		*type = TOKEN_SEMICOLON;
 }
 
 /**
@@ -153,23 +155,88 @@ char	*read_operator(const char *s, int *i, t_token_type *type)
 }
 
 /**
+ * is_word_delimiter - Controlla se il carattere è un delimitatore
+ * @c: Carattere da controllare
+ * 
+ * Return: 1 se è un delimitatore, 0 altrimenti
+ */
+static int	is_word_delimiter(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n'
+		|| c == '|' || c == '<' || c == '>'
+		|| c == '&' || c == '(' || c == ')' || c == ';' || c == '\0');
+}
+
+/**
+ * append_to_result - Aggiunge una sottostringa al risultato
+ * @result: Stringa risultato esistente (può essere NULL)
+ * @s: Stringa sorgente
+ * @start: Indice di inizio
+ * @len: Lunghezza da copiare
+ * 
+ * Return: Nuova stringa risultato (deve essere liberata)
+ */
+static char	*append_to_result(char *result, const char *s, int start, int len)
+{
+	char	*part;
+	char	*new_result;
+
+	part = extract_substring(s, start, len);
+	if (!part)
+		return (result);
+	if (!result)
+		return (part);
+	new_result = ft_strjoin(result, part);
+	free(result);
+	free(part);
+	return (new_result);
+}
+
+/**
  * read_word - Legge una parola (comando o argomento) dalla stringa
  * @s: Stringa di input
  * @i: Puntatore alla posizione corrente (viene aggiornato)
  * 
- * Legge tutti i caratteri consecutivi che non sono spazi, operatori o quote.
+ * Legge una parola completa che può contenere:
+ * - Caratteri normali (non spazi, non operatori)
+ * - Stringhe tra quote (singole o doppie)
+ * - Combinazioni di entrambi (es: hello"world"test)
  * 
- * Return: La parola estratta
+ * Return: La parola estratta (include le quote per expansion successiva)
  */
 char	*read_word(const char *s, int *i)
 {
+	char	*result;
+	char	*quoted;
 	int		start;
 
-	start = *i;
-	while (s[*i] && s[*i] != ' ' && s[*i] != '\t'
-		&& s[*i] != '|' && s[*i] != '<' && s[*i] != '>'
-		&& s[*i] != '&' && s[*i] != '(' && s[*i] != ')'
-		&& s[*i] != '\'' && s[*i] != '"')
-		(*i)++;
-	return (extract_substring(s, start, *i - start));
+	result = NULL;
+	while (s[*i] && !is_word_delimiter(s[*i]))
+	{
+		if (s[*i] == '\'' || s[*i] == '"')
+		{
+			quoted = read_quoted(s, i);
+			if (quoted)
+			{
+				if (!result)
+					result = quoted;
+				else
+				{
+					result = append_to_result(result, quoted, 0, ft_strlen(quoted));
+					free(quoted);
+				}
+			}
+		}
+		else
+		{
+			start = *i;
+			while (s[*i] && !is_word_delimiter(s[*i])
+				&& s[*i] != '\'' && s[*i] != '"')
+				(*i)++;
+			result = append_to_result(result, s, start, *i - start);
+		}
+	}
+	if (!result)
+		return (ft_strdup(""));
+	return (result);
 }

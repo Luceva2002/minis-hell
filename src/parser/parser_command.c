@@ -6,7 +6,7 @@
 /*   By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 00:00:00 by luevange          #+#    #+#             */
-/*   Updated: 2025/11/16 00:49:48 by luevange         ###   ########.fr       */
+/*   Updated: 2025/11/30 21:24:44 by luevange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ static int	handle_redirect(t_token **tokens, int *pos, t_command *cmd,
 				t_shell_context *ctx)
 {
 	t_redirect	*redir;
-	char		*processed;
 
+	(void)ctx;
 	redir = malloc(sizeof(t_redirect));
 	if (!redir)
 		return (0);
@@ -44,8 +44,7 @@ static int	handle_redirect(t_token **tokens, int *pos, t_command *cmd,
 	(*pos)++;
 	if (!tokens[*pos] || tokens[*pos]->type != TOKEN_WORD)
 		return (free(redir), 0);
-	processed = process_token_value(tokens[*pos]->value, ctx);
-	redir->filename = processed;
+	redir->filename = ft_strdup(tokens[*pos]->value);
 	if (!redir->filename)
 		return (free(redir), 0);
 	if (!cmd_add_redirect(cmd, redir))
@@ -57,17 +56,11 @@ static int	handle_redirect(t_token **tokens, int *pos, t_command *cmd,
 static int	process_token(t_token **tokens, int *pos, t_command *cmd,
 				t_shell_context *ctx)
 {
-	char	*processed;
-
+	(void)ctx;
 	if (tokens[*pos]->type == TOKEN_WORD)
 	{
-		processed = process_token_value(tokens[*pos]->value, ctx);
-		if (!processed || !cmd_add_argument(cmd, processed))
-		{
-			free(processed);
+		if (!cmd_add_argument(cmd, tokens[*pos]->value))
 			return (0);
-		}
-		free(processed);
 		(*pos)++;
 	}
 	else

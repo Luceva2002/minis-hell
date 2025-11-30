@@ -94,8 +94,9 @@ int	apply_output_redirect(char *filename, int append)
  * Legge linee dall'utente fino a quando non viene digitato il delimiter.
  * Le linee vengono scritte in una pipe e stdin viene reindirizzato
  * a leggere dalla pipe.
+ * Gestisce Ctrl+C per interrompere l'input del heredoc.
  * 
- * Return: 1 in caso di successo, 0 in caso di errore
+ * Return: 1 in caso di successo, 0 in caso di errore/interruzione
  */
 int	apply_heredoc(char *delimiter)
 {
@@ -107,9 +108,19 @@ int	apply_heredoc(char *delimiter)
 		perror("pipe");
 		return (0);
 	}
+	g_signal = 0;
+	setup_signals_heredoc();
 	while (1)
 	{
 		line = readline("> ");
+		if (g_signal == SIGINT)
+		{
+			free(line);
+			close(pipe_fd[0]);
+			close(pipe_fd[1]);
+			setup_signals();
+			return (0);
+		}
 		if (!line || ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
 		{
 			free(line);
@@ -120,6 +131,7 @@ int	apply_heredoc(char *delimiter)
 		free(line);
 	}
 	close(pipe_fd[1]);
+	setup_signals();
 	if (dup2(pipe_fd[0], STDIN_FILENO) < 0)
 		return (perror("dup2"), close(pipe_fd[0]), 0);
 	close(pipe_fd[0]);

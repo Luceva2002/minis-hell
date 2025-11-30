@@ -191,40 +191,103 @@ char	*expand_variables(char *str, t_shell_context *ctx, int in_quotes)
 /* ========================================================================== */
 
 /**
- * process_token_value - Processa un valore di token: rimuove quote ed espande variabili
- * @value: Valore del token (può avere quote)
+ * process_quoted_segment - Processa un segmento tra quote
+ * @value: Stringa che inizia con una quote
+ * @i: Puntatore alla posizione corrente (viene aggiornato)
  * @ctx: Contesto della shell
  * 
- * Algoritmo:
- * 1. Se ha singole quote ('...') -> rimuove quote, NON espande variabili
- * 2. Se ha doppie quote ("...") -> rimuove quote, espande variabili
- * 3. Se non ha quote -> espande variabili
+ * Return: Stringa processata (senza quote, con/senza espansione)
+ */
+static char	*process_quoted_segment(char *value, int *i, t_shell_context *ctx)
+{
+	char	quote;
+	int		start;
+	char	*content;
+	char	*result;
+
+	quote = value[*i];
+	(*i)++;
+	start = *i;
+	while (value[*i] && value[*i] != quote)
+		(*i)++;
+	content = ft_substr(value, start, *i - start);
+	if (value[*i] == quote)
+		(*i)++;
+	if (!content)
+		return (ft_strdup(""));
+	if (quote == '\'')
+		return (content);
+	result = expand_variables(content, ctx, 1);
+	free(content);
+	return (result);
+}
+
+/**
+ * process_unquoted_segment - Processa un segmento non tra quote
+ * @value: Stringa di input
+ * @i: Puntatore alla posizione corrente (viene aggiornato)
+ * @ctx: Contesto della shell
+ * 
+ * Return: Stringa processata (con espansione variabili)
+ */
+static char	*process_unquoted_segment(char *value, int *i, t_shell_context *ctx)
+{
+	int		start;
+	char	*content;
+	char	*result;
+
+	start = *i;
+	while (value[*i] && value[*i] != '\'' && value[*i] != '"')
+		(*i)++;
+	content = ft_substr(value, start, *i - start);
+	if (!content)
+		return (ft_strdup(""));
+	result = expand_variables(content, ctx, 0);
+	free(content);
+	return (result);
+}
+
+/**
+ * process_token_value - Processa un valore di token: rimuove quote ed espande variabili
+ * @value: Valore del token (può avere quote miste, es: hello"world"'$USER')
+ * @ctx: Contesto della shell
+ * 
+ * Algoritmo per token con quote miste:
+ * 1. Scorre il token carattere per carattere
+ * 2. Singole quote ('...') -> contenuto letterale, NO espansione
+ * 3. Doppie quote ("...") -> contenuto espanso
+ * 4. Testo non quotato -> espande variabili
+ * 5. Concatena tutti i segmenti
  * 
  * Return: Stringa processata (allocata)
  */
 char	*process_token_value(char *value, t_shell_context *ctx)
 {
-	char	*temp;
 	char	*result;
-	int		len;
+	char	*segment;
+	char	*new_result;
+	int		i;
 
-	if (!value)
+	if (!value || !*value)
 		return (ft_strdup(""));
-	len = ft_strlen(value);
-	if (len >= 2 && value[0] == '\'' && value[len - 1] == '\'')
+	result = ft_strdup("");
+	i = 0;
+	while (value[i])
 	{
-		return (remove_quotes(value));
+		if (value[i] == '\'' || value[i] == '"')
+			segment = process_quoted_segment(value, &i, ctx);
+		else
+			segment = process_unquoted_segment(value, &i, ctx);
+		if (segment)
+		{
+			new_result = ft_strjoin(result, segment);
+			free(result);
+			free(segment);
+			result = new_result;
+			if (!result)
+				return (ft_strdup(""));
+		}
 	}
-	else if (len >= 2 && value[0] == '"' && value[len - 1] == '"')
-	{
-		temp = remove_quotes(value);
-		result = expand_variables(temp, ctx, 1);
-		free(temp);
-		return (result);
-	}
-	else
-	{
-		return (expand_variables(value, ctx, 0));
-	}
+	return (result);
 }
 
