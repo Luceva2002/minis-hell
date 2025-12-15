@@ -68,7 +68,7 @@ static void	shell_loop(t_shell_context *ctx)
 		line = readline("minishell$ ");
 		if (!line)
 		{
-			ft_putendl_fd("exit", 1);
+			ft_putendl_fd("exit", 2);
 			break ;
 		}
 		if (g_signal == SIGINT)
@@ -102,6 +102,8 @@ int	main(int argc, char **argv, char **envp)
 	ctx.running = 1;
 	if (isatty(STDIN_FILENO))
 		print_banner();
+	else
+		ft_putendl_fd("IGNORE_PROMPT", STDOUT_FILENO);
 	shell_loop(&ctx);
 	env_free(ctx.env);
 	return (ctx.last_exit_code);

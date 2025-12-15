@@ -78,7 +78,7 @@ int	builtin_exit(char **args, t_shell_context *ctx)
 	long long		exit_code;
 	unsigned char	final_code;
 
-	ft_putendl_fd("exit", STDOUT_FILENO);
+	ft_putendl_fd("exit", STDERR_FILENO);
 	if (!args[1])
 		exit(ctx->last_exit_code);
 	if (!is_numeric(args[1]))
