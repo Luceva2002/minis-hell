@@ -13,6 +13,8 @@
 #include "../../includes/minishell.h"
 #include <signal.h>
 
+int		handle_path_error(char *cmd);
+
 static void	execute_in_child(t_command *cmd, char *path, t_shell_context *ctx)
 {
 	char	**envp;
@@ -38,6 +40,11 @@ static void	cmd_not_found(char *cmd)
 	ft_putstr_fd(": command not found\n", 2);
 }
 
+static int	is_path_cmd(char *cmd)
+{
+	return (ft_strchr(cmd, '/') != NULL);
+}
+
 static int	handle_ext_signal(int status)
 {
 	if (WTERMSIG(status) == SIGINT)
@@ -55,7 +62,11 @@ int	execute_external_command(t_command *cmd, t_shell_context *ctx)
 
 	path = find_executable_in_path(cmd->args[0], ctx->env);
 	if (!path)
+	{
+		if (is_path_cmd(cmd->args[0]))
+			return (handle_path_error(cmd->args[0]));
 		return (cmd_not_found(cmd->args[0]), 127);
+	}
 	pid = fork();
 	if (pid == -1)
 		return (perror("minishell: fork"), free(path), 1);

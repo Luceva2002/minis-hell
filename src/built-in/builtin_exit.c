@@ -6,7 +6,7 @@
 /*   By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 00:00:00 by luevange          #+#    #+#             */
-/*   Updated: 2025/11/08 00:00:00 by luevange         ###   ########.fr       */
+/*   Updated: 2025/12/15 14:08:57 by luevange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static void	exit_error_numeric(char *arg)
 	ft_putstr_fd("minishell: exit: ", 2);
 	ft_putstr_fd(arg, 2);
 	ft_putstr_fd(": numeric argument required\n", 2);
-	exit(2);
+	exit(255);
 }
 
 int	builtin_exit(char **args, t_shell_context *ctx)

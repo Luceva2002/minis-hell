@@ -34,6 +34,23 @@ static int	execute_builtin_redir(t_command *cmd, t_shell_context *ctx)
 	return (1);
 }
 
+static void	compact_args(char **args)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	j = 0;
+	while (args[++i])
+	{
+		if (args[i][0])
+			args[j++] = args[i];
+		else
+			free(args[i]);
+	}
+	args[j] = NULL;
+}
+
 static int	expand_args(t_command *cmd, t_shell_context *ctx)
 {
 	int		i;
@@ -41,16 +58,16 @@ static int	expand_args(t_command *cmd, t_shell_context *ctx)
 
 	if (!cmd || !cmd->args)
 		return (1);
-	i = 0;
-	while (cmd->args[i])
+	i = -1;
+	while (cmd->args[++i])
 	{
 		expanded = process_token_value(cmd->args[i], ctx);
 		if (!expanded)
 			return (0);
 		free(cmd->args[i]);
 		cmd->args[i] = expanded;
-		i++;
 	}
+	compact_args(cmd->args);
 	return (1);
 }
 
@@ -77,18 +94,11 @@ static int	expand_redirects(t_command *cmd, t_shell_context *ctx)
 	return (1);
 }
 
-static int	expand_command_args(t_command *cmd, t_shell_context *ctx)
-{
-	if (!expand_args(cmd, ctx))
-		return (0);
-	return (expand_redirects(cmd, ctx));
-}
-
 int	execute_simple_command(t_ast_node *node, t_shell_context *ctx)
 {
 	if (!node || !node->cmd || !node->cmd->args || !node->cmd->args[0])
 		return (0);
-	if (!expand_command_args(node->cmd, ctx))
+	if (!expand_args(node->cmd, ctx) || !expand_redirects(node->cmd, ctx))
 		return (1);
 	if (!node->cmd->args[0] || !node->cmd->args[0][0])
 		return (0);

@@ -11,6 +11,31 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <sys/stat.h>
+
+int	handle_path_error(char *cmd)
+{
+	struct stat	st;
+
+	if (stat(cmd, &st) == 0)
+	{
+		if (S_ISDIR(st.st_mode))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd, 2);
+			ft_putstr_fd(": is a directory\n", 2);
+			return (126);
+		}
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd, 2);
+		ft_putstr_fd(": Permission denied\n", 2);
+		return (126);
+	}
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd(": No such file or directory\n", 2);
+	return (127);
+}
 
 static void	free_dirs_array(char **dirs)
 {
@@ -51,9 +76,17 @@ static char	*search_in_dirs(char **dirs, char *cmd_name)
 	return (NULL);
 }
 
-static int	is_path(char *cmd)
+static int	is_valid_executable(char *path)
 {
-	return (ft_strchr(cmd, '/') != NULL);
+	struct stat	st;
+
+	if (access(path, X_OK) != 0)
+		return (0);
+	if (stat(path, &st) != 0)
+		return (0);
+	if (S_ISDIR(st.st_mode))
+		return (0);
+	return (1);
 }
 
 char	*find_executable_in_path(char *cmd_name, t_env *env)
@@ -61,9 +94,9 @@ char	*find_executable_in_path(char *cmd_name, t_env *env)
 	char	*path_env;
 	char	**dirs;
 
-	if (is_path(cmd_name))
+	if (ft_strchr(cmd_name, '/'))
 	{
-		if (access(cmd_name, X_OK) == 0)
+		if (is_valid_executable(cmd_name))
 			return (ft_strdup(cmd_name));
 		return (NULL);
 	}

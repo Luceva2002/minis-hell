@@ -12,6 +12,7 @@
 
 #include "../includes/minishell.h"
 #include <signal.h>
+#include <unistd.h>
 
 void	print_banner(void);
 
@@ -65,18 +66,17 @@ static void	shell_loop(t_shell_context *ctx)
 	{
 		g_signal = 0;
 		line = readline("minishell$ ");
-		if (g_signal == SIGINT)
-		{
-			ctx->last_exit_code = 130;
-			free(line);
-			continue ;
-		}
 		if (!line)
 		{
 			ft_putendl_fd("exit", 1);
 			break ;
 		}
-		if (*line)
+		if (g_signal == SIGINT)
+		{
+			ctx->last_exit_code = 130;
+			g_signal = 0;
+		}
+		else if (*line)
 		{
 			add_history(line);
 			process_input(line, ctx);
@@ -100,7 +100,8 @@ int	main(int argc, char **argv, char **envp)
 	}
 	ctx.last_exit_code = 0;
 	ctx.running = 1;
-	print_banner();
+	if (isatty(STDIN_FILENO))
+		print_banner();
 	shell_loop(&ctx);
 	env_free(ctx.env);
 	return (ctx.last_exit_code);
