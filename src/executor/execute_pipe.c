@@ -13,18 +13,6 @@
 #include "../../includes/minishell.h"
 #include <signal.h>
 
-/* ========================================================================== */
-/*                          PIPE EXECUTION HELPERS                           */
-/* ========================================================================== */
-
-/**
- * execute_left_pipe - Esegue il comando a sinistra della pipe
- * @node: Nodo AST da eseguire
- * @pipe_fd: File descriptors della pipe
- * @ctx: Contesto della shell
- * 
- * Reindirizza stdout sulla write end della pipe ed esegue il comando left.
- */
 static void	execute_left_pipe(t_ast_node *node, int pipe_fd[2],
 				t_shell_context *ctx)
 {
@@ -39,14 +27,6 @@ static void	execute_left_pipe(t_ast_node *node, int pipe_fd[2],
 	exit(execute(node->left, ctx));
 }
 
-/**
- * execute_right_pipe - Esegue il comando a destra della pipe
- * @node: Nodo AST da eseguire
- * @pipe_fd: File descriptors della pipe
- * @ctx: Contesto della shell
- * 
- * Reindirizza stdin sulla read end della pipe ed esegue il comando right.
- */
 static void	execute_right_pipe(t_ast_node *node, int pipe_fd[2],
 				t_shell_context *ctx)
 {
@@ -61,36 +41,33 @@ static void	execute_right_pipe(t_ast_node *node, int pipe_fd[2],
 	exit(execute(node->right, ctx));
 }
 
-/* ========================================================================== */
-/*                         MAIN PIPE EXECUTION                               */
-/* ========================================================================== */
+static int	handle_pipe_signal(int status)
+{
+	if (WTERMSIG(status) == SIGINT)
+		return (write(1, "\n", 1), 130);
+	if (WTERMSIG(status) == SIGQUIT)
+		return (ft_putendl_fd("Quit: 3", 2), 131);
+	return (128 + WTERMSIG(status));
+}
 
-/**
- * execute_pipe - Esegue una pipeline (comando1 | comando2)
- * @node: Nodo AST di tipo NODE_PIPE
- * @ctx: Contesto della shell
- * 
- * Algoritmo:
- * 1. Crea una pipe
- * 2. Fork primo figlio per left:
- *    - stdout → write end della pipe
- *    - esegue left
- * 3. Fork secondo figlio per right:
- *    - stdin ← read end della pipe
- *    - esegue right
- * 4. Padre chiude entrambi i file descriptors della pipe
- * 5. Padre aspetta entrambi i figli
- * 6. Return exit status dell'ultimo comando (right)
- * 
- * Return: Exit status del comando right
- */
+static int	wait_pipe_children(pid_t left, pid_t right)
+{
+	int	status;
+
+	waitpid(left, &status, 0);
+	waitpid(right, &status, 0);
+	if (WIFSIGNALED(status))
+		return (handle_pipe_signal(status));
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	return (1);
+}
+
 int	execute_pipe(t_ast_node *node, t_shell_context *ctx)
 {
 	int		pipe_fd[2];
 	pid_t	pid_left;
 	pid_t	pid_right;
-	int		status;
-	int		exit_status;
 
 	if (pipe(pipe_fd) < 0)
 		return (perror("pipe"), 1);
@@ -106,21 +83,5 @@ int	execute_pipe(t_ast_node *node, t_shell_context *ctx)
 		execute_right_pipe(node, pipe_fd, ctx);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
-	waitpid(pid_left, &status, 0);
-	waitpid(pid_right, &status, 0);
-	if (WIFSIGNALED(status))
-	{
-		if (WTERMSIG(status) == SIGINT)
-			return (write(1, "\n", 1), 130);
-		if (WTERMSIG(status) == SIGQUIT)
-			return (ft_putendl_fd("Quit: 3", 2), 131);
-		return (128 + WTERMSIG(status));
-	}
-	if (WIFEXITED(status))
-		exit_status = WEXITSTATUS(status);
-	else
-		exit_status = 1;
-	return (exit_status);
+	return (wait_pipe_children(pid_left, pid_right));
 }
-
-

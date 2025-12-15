@@ -12,21 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                            CD BUILTIN                                     */
-/* ========================================================================== */
-
-/**
- * get_target_directory - Determina la directory target per cd
- * @args: Array di argomenti
- * @ctx: Contesto della shell
- * 
- * - Senza argomenti: va a HOME
- * - Con "-": va a OLDPWD
- * - Con path: usa il path specificato
- * 
- * Return: Path della directory target, NULL se HOME/OLDPWD non sono settati
- */
 static char	*get_target_directory(char **args, t_shell_context *ctx)
 {
 	char	*target;
@@ -55,11 +40,6 @@ static char	*get_target_directory(char **args, t_shell_context *ctx)
 	return (args[1]);
 }
 
-/**
- * update_pwd_vars - Aggiorna PWD e OLDPWD nell'environment
- * @old_pwd: Vecchia directory di lavoro
- * @ctx: Contesto della shell
- */
 static void	update_pwd_vars(char *old_pwd, t_shell_context *ctx)
 {
 	char	*new_pwd;
@@ -77,16 +57,6 @@ static void	update_pwd_vars(char *old_pwd, t_shell_context *ctx)
 	free(new_pwd);
 }
 
-/**
- * builtin_cd - Implementa il comando cd
- * @args: Array di argomenti (args[0] = "cd", args[1] = target)
- * @ctx: Contesto della shell
- * 
- * Cambia la directory corrente e aggiorna PWD e OLDPWD.
- * bash ignora argomenti extra, ma alcuni test potrebbero verificarlo.
- * 
- * Return: 0 in caso di successo, 1 in caso di errore
- */
 int	builtin_cd(char **args, t_shell_context *ctx)
 {
 	char	*target;
@@ -111,5 +81,3 @@ int	builtin_cd(char **args, t_shell_context *ctx)
 	update_pwd_vars(old_pwd, ctx);
 	return (0);
 }
-
-

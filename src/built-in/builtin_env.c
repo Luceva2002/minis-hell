@@ -39,4 +39,3 @@ int	builtin_env(t_shell_context *ctx)
 	}
 	return (0);
 }
-

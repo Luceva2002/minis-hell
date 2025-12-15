@@ -12,15 +12,9 @@
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                         BUILTIN DETECTION                                 */
-/* ========================================================================== */
-
 /**
- * is_builtin - Controlla se un comando è un built-in
+ * is_builtin - Controlla se un comando e un built-in
  * @cmd: Nome del comando da verificare
- * 
- * Return: 1 se è un built-in, 0 altrimenti
  */
 int	is_builtin(char *cmd)
 {
@@ -43,18 +37,10 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-/* ========================================================================== */
-/*                        BUILTIN EXECUTION                                  */
-/* ========================================================================== */
-
 /**
  * execute_builtin - Esegue un comando built-in
  * @cmd: Struttura comando con args
  * @ctx: Contesto della shell
- * 
- * Identifica quale built-in eseguire e chiama la funzione appropriata.
- * 
- * Return: Exit status del built-in
  */
 int	execute_builtin(t_command *cmd, t_shell_context *ctx)
 {
@@ -74,5 +60,3 @@ int	execute_builtin(t_command *cmd, t_shell_context *ctx)
 		return (builtin_exit(cmd->args, ctx));
 	return (1);
 }
-
-

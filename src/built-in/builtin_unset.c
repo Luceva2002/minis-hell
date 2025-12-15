@@ -12,19 +12,10 @@
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                           UNSET BUILTIN                                   */
-/* ========================================================================== */
-
 /**
  * builtin_unset - Implementa il comando unset
  * @args: Array di argomenti (args[0] = "unset", args[1..n] = variabili)
  * @ctx: Contesto della shell
- * 
- * Rimuove le variabili specificate dall'environment.
- * Non restituisce errore se una variabile non esiste.
- * 
- * Return: Sempre 0 (unset non fallisce)
  */
 int	builtin_unset(char **args, t_shell_context *ctx)
 {
@@ -38,5 +29,3 @@ int	builtin_unset(char **args, t_shell_context *ctx)
 	}
 	return (0);
 }
-
-

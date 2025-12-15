@@ -41,8 +41,10 @@ SRCS		= $(SRC_DIR)/minishell.c \
 			  $(LEXER_DIR)/lexer_utils.c \
 			  $(LEXER_DIR)/tokenize.c \
 			  $(LEXER_DIR)/tokenize2.c \
+			  $(LEXER_DIR)/tokenize3.c \
 			  $(VALIDATE_DIR)/check_syntax.c \
 			  $(VALIDATE_DIR)/check_operators.c \
+			  $(VALIDATE_DIR)/check_operators_utils.c \
 			  $(VALIDATE_DIR)/check_parens.c \
 			  $(VALIDATE_DIR)/print_error.c \
 			  $(PARSER_DIR)/parser.c \
@@ -52,11 +54,16 @@ SRCS		= $(SRC_DIR)/minishell.c \
 			  $(PARSER_DIR)/parser_command.c \
 			  $(PARSER_DIR)/parser_free.c \
 			  $(EXECUTOR_DIR)/executor.c \
+			  $(EXECUTOR_DIR)/executor_simple.c \
+			  $(EXECUTOR_DIR)/executor_logic.c \
 			  $(EXECUTOR_DIR)/execute_command.c \
+			  $(EXECUTOR_DIR)/path_utils.c \
 			  $(EXECUTOR_DIR)/execute_pipe.c \
 			  $(EXECUTOR_DIR)/redirections.c \
+			  $(EXECUTOR_DIR)/heredoc.c \
 			  $(ENV_DIR)/env_init.c \
 			  $(ENV_DIR)/env_utils.c \
+			  $(ENV_DIR)/env_array.c \
 			  $(BUILTIN_DIR)/builtin_utils.c \
 			  $(BUILTIN_DIR)/builtin_echo.c \
 			  $(BUILTIN_DIR)/builtin_cd.c \
@@ -66,7 +73,10 @@ SRCS		= $(SRC_DIR)/minishell.c \
 			  $(BUILTIN_DIR)/builtin_env.c \
 			  $(BUILTIN_DIR)/builtin_exit.c \
 			  $(UTILS_SRC_DIR)/expand.c \
-			  $(UTILS_SRC_DIR)/signals.c
+			  $(UTILS_SRC_DIR)/expand_utils.c \
+			  $(UTILS_SRC_DIR)/expand_process.c \
+			  $(UTILS_SRC_DIR)/signals.c \
+			  $(UTILS_SRC_DIR)/banner.c
 
 # Object files (tutti nella cartella obj/)
 OBJS		= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))

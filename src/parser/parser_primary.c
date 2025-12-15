@@ -44,4 +44,3 @@ t_ast_node	*parse_primary(t_token **tokens, int *pos, t_shell_context *ctx)
 		return (parse_subshell(tokens, pos, ctx));
 	return (parse_redir_and_cmd(tokens, pos, ctx));
 }
-

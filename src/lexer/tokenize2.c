@@ -6,63 +6,15 @@
 /*   By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/26 18:40:00 by luevange          #+#    #+#             */
-/*   Updated: 2025/11/30 21:24:44 by luevange         ###   ########.fr       */
+/*   Updated: 2025/12/02 00:00:00 by luevange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                         STRING EXTRACTION HELPER                          */
-/* ========================================================================== */
+char	*append_to_result(char *result, const char *s, int start, int len);
+int		is_word_delimiter(char c);
 
-/**
- * extract_substring - Estrae una sottostringa e la copia in un nuovo buffer
- * @s: Stringa sorgente
- * @start: Indice di inizio dell'estrazione
- * @len: Lunghezza della sottostringa da estrarre
- * 
- * Return: La sottostringa allocata, o NULL in caso di errore
- */
-static char	*extract_substring(const char *s, int start, int len)
-{
-	char	*result;
-	int		i;
-
-	result = malloc(len + 1);
-	if (!result)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		result[i] = s[start + i];
-		i++;
-	}
-	result[len] = '\0';
-	return (result);
-}
-
-/* ========================================================================== */
-/*                         QUOTE READING FUNCTION                            */
-/* ========================================================================== */
-
-/**
- * read_quoted - Legge una stringa tra quote (singole o doppie)
- * @s: Stringa di input
- * @i: Puntatore alla posizione corrente (viene aggiornato)
- * 
- * Questa funzione legge una stringa racchiusa tra quote dello stesso tipo.
- * Include le quote nel risultato per preservare le informazioni sul tipo.
- * 
- * Processo:
- * 1. Salva il tipo di quote (apice singolo o doppio)
- * 2. Avanza oltre la quote di apertura
- * 3. Legge tutti i caratteri fino alla quote di chiusura
- * 4. Include anche la quote di chiusura
- * 5. Restituisce la stringa completa (con quote)
- * 
- * Return: La stringa estratta (con quote incluse)
- */
 char	*read_quoted(const char *s, int *i)
 {
 	char	quote;
@@ -90,18 +42,6 @@ char	*read_quoted(const char *s, int *i)
 	return (result);
 }
 
-/* ========================================================================== */
-/*                        OPERATOR TYPE DETECTION                            */
-/* ========================================================================== */
-
-/**
- * set_operator_type - Determina il tipo di operatore dalla stringa
- * @val: La stringa contenente l'operatore
- * @type: Puntatore al tipo da impostare
- * 
- * Analizza la stringa dell'operatore e imposta il tipo corrispondente.
- * Gestisce operatori a 1 e 2 caratteri (|, ||, <, <<, >, >>, &, &&, (, ), ;)
- */
 static void	set_operator_type(const char *val, t_token_type *type)
 {
 	if (val[0] == '|' && val[1] == '|')
@@ -126,16 +66,6 @@ static void	set_operator_type(const char *val, t_token_type *type)
 		*type = TOKEN_SEMICOLON;
 }
 
-/**
- * read_operator - Legge un operatore dalla stringa di input
- * @s: Stringa di input
- * @i: Puntatore alla posizione corrente (viene aggiornato)
- * @type: Puntatore al tipo di token (viene impostato)
- * 
- * Legge un operatore (1 o 2 caratteri) e determina il suo tipo.
- * 
- * Return: La stringa dell'operatore
- */
 char	*read_operator(const char *s, int *i, t_token_type *type)
 {
 	int		start;
@@ -149,84 +79,41 @@ char	*read_operator(const char *s, int *i, t_token_type *type)
 		(*i) += 2;
 	else
 		(*i)++;
-	val = extract_substring(s, start, *i - start);
+	val = ft_substr(s, start, *i - start);
 	set_operator_type(val, type);
 	return (val);
 }
 
-/**
- * is_word_delimiter - Controlla se il carattere è un delimitatore
- * @c: Carattere da controllare
- * 
- * Return: 1 se è un delimitatore, 0 altrimenti
- */
-static int	is_word_delimiter(char c)
+static void	handle_quoted_word(const char *s, int *i, char **result)
 {
-	return (c == ' ' || c == '\t' || c == '\n'
-		|| c == '|' || c == '<' || c == '>'
-		|| c == '&' || c == '(' || c == ')' || c == ';' || c == '\0');
+	char	*quoted;
+	char	*tmp;
+
+	quoted = read_quoted(s, i);
+	if (quoted)
+	{
+		if (!*result)
+			*result = quoted;
+		else
+		{
+			tmp = ft_strjoin(*result, quoted);
+			free(*result);
+			free(quoted);
+			*result = tmp;
+		}
+	}
 }
 
-/**
- * append_to_result - Aggiunge una sottostringa al risultato
- * @result: Stringa risultato esistente (può essere NULL)
- * @s: Stringa sorgente
- * @start: Indice di inizio
- * @len: Lunghezza da copiare
- * 
- * Return: Nuova stringa risultato (deve essere liberata)
- */
-static char	*append_to_result(char *result, const char *s, int start, int len)
-{
-	char	*part;
-	char	*new_result;
-
-	part = extract_substring(s, start, len);
-	if (!part)
-		return (result);
-	if (!result)
-		return (part);
-	new_result = ft_strjoin(result, part);
-	free(result);
-	free(part);
-	return (new_result);
-}
-
-/**
- * read_word - Legge una parola (comando o argomento) dalla stringa
- * @s: Stringa di input
- * @i: Puntatore alla posizione corrente (viene aggiornato)
- * 
- * Legge una parola completa che può contenere:
- * - Caratteri normali (non spazi, non operatori)
- * - Stringhe tra quote (singole o doppie)
- * - Combinazioni di entrambi (es: hello"world"test)
- * 
- * Return: La parola estratta (include le quote per expansion successiva)
- */
 char	*read_word(const char *s, int *i)
 {
 	char	*result;
-	char	*quoted;
 	int		start;
 
 	result = NULL;
 	while (s[*i] && !is_word_delimiter(s[*i]))
 	{
 		if (s[*i] == '\'' || s[*i] == '"')
-		{
-			quoted = read_quoted(s, i);
-			if (quoted)
-			{
-				if (!result)
-					result = quoted;
-				else
-				{
-					result = append_to_result(result, quoted, 0, ft_strlen(quoted));
-					free(quoted);
-				}
-			}
-		}
+			handle_quoted_word(s, i, &result);
 		else
 		{
 			start = *i;

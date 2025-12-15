@@ -6,7 +6,7 @@
 /*   By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 18:22:19 by luevange          #+#    #+#             */
-/*   Updated: 2025/11/30 21:24:44 by luevange         ###   ########.fr       */
+/*   Updated: 2025/12/02 21:38:30 by luevange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ t_ast_node	*parse_and(t_token **tokens, int *pos, t_shell_context *ctx);
 t_ast_node	*parse_pipe(t_token **tokens, int *pos, t_shell_context *ctx);
 t_ast_node	*parse_primary(t_token **tokens, int *pos, t_shell_context *ctx);
 t_ast_node	*parse_redir_and_cmd(t_token **tokens, int *pos,
-			t_shell_context *ctx);
+				t_shell_context *ctx);
 
 /**
  * CREAZIONE NODI AST
