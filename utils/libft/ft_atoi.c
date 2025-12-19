@@ -49,7 +49,4 @@ int	ft_atoi(const char *nptr)
 	}
 	return (r * s);
 }
-/*int main()
-{
-	printf("%d",ft_atoi("2147483647"));
-}*/
+ 

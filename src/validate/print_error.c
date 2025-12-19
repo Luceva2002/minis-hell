@@ -12,17 +12,11 @@
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                         ERROR MESSAGE PRINTING                            */
-/* ========================================================================== */
+ 
+ 
+ 
 
-/**
- * syntax_print_error - Stampa il messaggio di errore corrispondente al codice
- * @error_code: Il codice di errore (SYNTAX_UNCLOSED, SYNTAX_OPERATOR, ecc.)
- * 
- * Stampa su stderr il messaggio di errore appropriato per guidare l'utente
- * nella correzione della sintassi.
- */
+ 
 void	syntax_print_error(int error_code)
 {
 	if (error_code == SYNTAX_UNCLOSED)

@@ -126,14 +126,4 @@ char	**ft_split(char const *s, char c)
 	matrice [i] = NULL;
 	return (matrice);
 }
-/*
-int main() {
-    char	**matrice;
-
-    matrice = ft_split("--1-2--3---4----5-----42", '-');
-    while (*matrice)
-    {
-	    printf("%s\n", *matrice);
-	    matrice++;
-    }
-}*/
+ 

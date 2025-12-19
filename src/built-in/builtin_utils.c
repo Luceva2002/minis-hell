@@ -12,10 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-/**
- * is_builtin - Controlla se un comando e un built-in
- * @cmd: Nome del comando da verificare
- */
+ 
 int	is_builtin(char *cmd)
 {
 	if (!cmd)
@@ -37,11 +34,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-/**
- * execute_builtin - Esegue un comando built-in
- * @cmd: Struttura comando con args
- * @ctx: Contesto della shell
- */
+ 
 int	execute_builtin(t_command *cmd, t_shell_context *ctx)
 {
 	if (ft_strncmp(cmd->args[0], "echo", 5) == 0)

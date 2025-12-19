@@ -12,22 +12,11 @@
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                    PARENTHESES BALANCE VALIDATION                         */
-/* ========================================================================== */
+ 
+ 
+ 
 
-/**
- * syntax_check_parens - Verifica il bilanciamento delle parentesi
- * @tokens: Array di token da verificare
- * 
- * Usa un contatore di profondità (depth) per tracciare l'annidamento:
- * - Ogni '(' incrementa la profondità
- * - Ogni ')' decrementa la profondità
- * - Se la profondità diventa negativa, c'è una ')' senza '(' corrispondente
- * - Se alla fine la profondità non è 0, ci sono '(' non chiuse
- * 
- * Return: SYNTAX_OK se bilanciate, SYNTAX_PARENS altrimenti
- */
+ 
 int	syntax_check_parens(t_token **tokens)
 {
 	int	i;

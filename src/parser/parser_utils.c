@@ -12,19 +12,11 @@
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                         AST NODE CREATION                                 */
-/* ========================================================================== */
+ 
+ 
+ 
 
-/**
- * ast_node_create - Crea un nuovo nodo AST
- * @type: Tipo del nodo (NODE_CMD, NODE_PIPE, NODE_AND, NODE_OR, NODE_SUBSHELL)
- * 
- * Alloca e inizializza un nuovo nodo dell'Abstract Syntax Tree.
- * Tutti i puntatori sono inizializzati a NULL.
- * 
- * Return: Il nodo creato, o NULL in caso di errore
- */
+ 
 t_ast_node	*ast_node_create(t_node_type type)
 {
 	t_ast_node	*node;
@@ -39,13 +31,7 @@ t_ast_node	*ast_node_create(t_node_type type)
 	return (node);
 }
 
-/**
- * cmd_node_create - Crea un nuovo nodo comando
- * 
- * Alloca un nuovo nodo comando con tutti i campi inizializzati a NULL.
- * 
- * Return: Il comando creato, o NULL in caso di errore
- */
+ 
 t_command	*cmd_node_create(void)
 {
 	t_command	*cmd;
@@ -59,16 +45,11 @@ t_command	*cmd_node_create(void)
 	return (cmd);
 }
 
-/* ========================================================================== */
-/*                    COMMAND ARGUMENT MANAGEMENT                            */
-/* ========================================================================== */
+ 
+ 
+ 
 
-/**
- * count_arguments - Conta gli argomenti in un array
- * @args: Array di stringhe (NULL-terminated)
- * 
- * Return: Numero di argomenti
- */
+ 
 static int	count_arguments(char **args)
 {
 	int	i;
@@ -79,16 +60,7 @@ static int	count_arguments(char **args)
 	return (i);
 }
 
-/**
- * cmd_add_argument - Aggiunge un argomento a un comando
- * @cmd: Il comando a cui aggiungere l'argomento
- * @arg: L'argomento da aggiungere (viene duplicato)
- * 
- * Espande l'array di argomenti per includere il nuovo argomento.
- * Se è il primo argomento, lo salva anche come nome del comando.
- * 
- * Return: 1 in caso di successo, 0 in caso di errore
- */
+ 
 int	cmd_add_argument(t_command *cmd, char *arg)
 {
 	int		i;

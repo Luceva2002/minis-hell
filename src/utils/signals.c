@@ -23,13 +23,7 @@ void	handle_sigint(int sig)
 	rl_redisplay();
 }
 
-/**
- * handle_sigint_heredoc - Gestore SIGINT durante heredoc
- * @sig: Numero del segnale
- * 
- * Durante l'inserimento di heredoc, Ctrl+C deve interrompere
- * l'input e tornare al prompt principale.
- */
+ 
 static void	handle_sigint_heredoc(int sig)
 {
 	g_signal = sig;
@@ -37,19 +31,11 @@ static void	handle_sigint_heredoc(int sig)
 	close(STDIN_FILENO);
 }
 
-/* ========================================================================== */
-/*                         SIGNAL SETUP                                      */
-/* ========================================================================== */
+ 
+ 
+ 
 
-/**
- * setup_signals - Configura i gestori di segnali per la shell
- * 
- * Configura:
- * - SIGINT (Ctrl+C): mostra nuovo prompt senza terminare
- * - SIGQUIT (Ctrl+\): ignorato (SIG_IGN) in modalità interattiva
- * 
- * Questi comportamenti sono standard per le shell interattive.
- */
+ 
 void	setup_signals(void)
 {
 	struct sigaction	sa_int;
@@ -65,26 +51,14 @@ void	setup_signals(void)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
-/**
- * setup_signals_child - Configura segnali per processo figlio
- * 
- * Nel processo figlio, i segnali devono avere il comportamento di default:
- * - SIGINT termina il processo
- * - SIGQUIT termina il processo con core dump
- */
+ 
 void	setup_signals_child(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 }
 
-/**
- * setup_signals_heredoc - Configura segnali durante heredoc
- * 
- * Durante l'input del heredoc:
- * - SIGINT interrompe l'input
- * - SIGQUIT ignorato
- */
+ 
 void	setup_signals_heredoc(void)
 {
 	struct sigaction	sa_int;

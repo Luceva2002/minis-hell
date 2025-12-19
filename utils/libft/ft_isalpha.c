@@ -21,12 +21,4 @@ int	ft_isalpha(int c)
 		return (0);
 	return (1);
 }
-/*
-int main ()
-{ 
-	char c= 'b';
-	char j= '/';
-	char k= 'C';	
-	return 0;
-}
-*/
+ 

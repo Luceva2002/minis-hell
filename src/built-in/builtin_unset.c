@@ -12,11 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-/**
- * builtin_unset - Implementa il comando unset
- * @args: Array di argomenti (args[0] = "unset", args[1..n] = variabili)
- * @ctx: Contesto della shell
- */
+ 
 int	builtin_unset(char **args, t_shell_context *ctx)
 {
 	int	i;

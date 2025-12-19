@@ -59,17 +59,4 @@ char	*ft_strtrim(char const *s1, char const *set)
 	r[j] = '\0';
 	return (r);
 }
-/*int main(void)
-{
-    char *s1 = "   xxx   xxx";
-    char *set = " x";
-    char *trimmed = ft_strtrim(s1, set);
-
-    if (trimmed)
-    {
-        printf("Trimmed String: '%s'\n", trimmed); // Output: "Hello, World!"
-        free(trimmed);
-    }
-
-    return 0;
-}*/
+ 

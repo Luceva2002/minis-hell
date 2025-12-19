@@ -12,10 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-/**
- * print_sorted_env - Stampa environment ordinato (come export senza args)
- * @ctx: Contesto della shell
- */
+ 
 static void	print_sorted_env(t_shell_context *ctx)
 {
 	t_env	*env;
@@ -88,11 +85,7 @@ static int	export_single_var(char *arg, t_shell_context *ctx)
 	return (0);
 }
 
-/**
- * builtin_export - Implementa il comando export
- * @args: Array di argomenti
- * @ctx: Contesto della shell
- */
+ 
 int	builtin_export(char **args, t_shell_context *ctx)
 {
 	int	i;

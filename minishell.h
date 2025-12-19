@@ -60,28 +60,28 @@ typedef struct s_command
 	struct s_command	*next;
 }	t_command;
 
-/* Quote handling functions */
+ 
 bool		is_quote(char c);
 void		copy_in_quotes(char *content, t_quote **lst);
 t_quote		*add_quote_node(t_quote **lst, char *content, int pos);
 char		*remove_quotes(char *str);
 
-/* Tokenization functions */
+ 
 t_token		*handle_split(char *line);
 t_token		*new_token(char *content, t_toktype type, int pos);
 t_token		*merge_matrice_and_quotes(char **matrice, t_quote *quotes);
 
-/* Command structure functions */
+ 
 t_command	*new_command(void);
 void		add_arg_to_command(t_command *cmd, const char *arg);
 void		set_infile(t_command *cmd, char *file);
 void		set_outfile(t_command *cmd, char *file, int append);
 void		append_command(t_command **head, t_command *new_cmd);
 
-/* Parser functions */
+ 
 t_command	*parse_tokens(t_token *tokens);
 
-/* Main */
+ 
 int			main(int ac, char **av);
 
 #endif

@@ -12,19 +12,11 @@
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                            ENV BUILTIN                                    */
-/* ========================================================================== */
+ 
+ 
+ 
 
-/**
- * builtin_env - Implementa il comando env
- * @ctx: Contesto della shell
- * 
- * Stampa tutte le variabili d'ambiente nel formato KEY=value.
- * Non accetta opzioni o argomenti (a differenza di export).
- * 
- * Return: 0 in caso di successo
- */
+ 
 int	builtin_env(t_shell_context *ctx)
 {
 	t_env	*env;

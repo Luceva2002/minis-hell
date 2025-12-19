@@ -12,19 +12,11 @@
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                       QUOTE VALIDATION HELPER                             */
-/* ========================================================================== */
+ 
+ 
+ 
 
-/**
- * has_unclosed_quote - Verifica se una stringa ha quote non chiuse
- * @str: La stringa da verificare
- * 
- * Scorre la stringa cercando coppie di quote (singole o doppie).
- * Per ogni quote di apertura, cerca la corrispondente di chiusura.
- * 
- * Return: 1 se ci sono quote non chiuse, 0 se tutto è bilanciato
- */
+ 
 static int	has_unclosed_quote(const char *str)
 {
 	int		i;
@@ -49,22 +41,11 @@ static int	has_unclosed_quote(const char *str)
 	return (0);
 }
 
-/* ========================================================================== */
-/*                     MAIN SYNTAX VALIDATION FUNCTION                       */
-/* ========================================================================== */
+ 
+ 
+ 
 
-/**
- * syntax_validate - Valida la sintassi di un array di token
- * @tokens: Array di token da validare
- * 
- * Questa è la funzione principale di validazione. Esegue tutti i controlli
- * sintattici necessari:
- * 1. Verifica che non ci siano quote non chiuse
- * 2. Verifica la corretta sequenza di operatori
- * 3. Verifica il bilanciamento delle parentesi
- * 
- * Return: SYNTAX_OK se tutto è valido, altrimenti un codice di errore
- */
+ 
 int	syntax_validate(t_token **tokens)
 {
 	int	i;

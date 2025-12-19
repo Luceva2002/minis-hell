@@ -26,15 +26,4 @@ void	*ft_memset(void *s, int c, size_t n)
 	}
 	return (s);
 }
-/*
-int main() {
-    char buffer[10];
-
-    // Fill the buffer with '-'
-    memset(buffer, '-', sizeof(buffer));
-    buffer[9] = '\0'; // Null-terminate for printing
-
-    printf("Buffer: %s\n", buffer); // Output: ---------
-
-    return 0;
-}*/
+ 

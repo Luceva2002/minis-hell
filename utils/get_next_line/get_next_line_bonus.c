@@ -94,17 +94,4 @@ char	*get_next_line(int fd)
 	}
 }
 
-/* int	main(void)
-{
-	int fd;
-	int i = 15;
-	char *line;
-	fd = open("test.txt", O_RDONLY);
-	while (i)
-	{
-		line = get_next_line(fd);
-		printf("%s", line);
-		free(line);
-		i--;
-	}
-} */
+ 

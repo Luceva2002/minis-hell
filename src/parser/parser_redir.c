@@ -12,16 +12,11 @@
 
 #include "../../includes/minishell.h"
 
-/* ========================================================================== */
-/*                    REDIRECTION MANAGEMENT                                 */
-/* ========================================================================== */
+ 
+ 
+ 
 
-/**
- * count_redirects - Conta le redirezioni in un array
- * @redirs: Array di redirezioni (NULL-terminated)
- * 
- * Return: Numero di redirezioni
- */
+ 
 static int	count_redirects(t_redirect **redirs)
 {
 	int	i;
@@ -32,16 +27,7 @@ static int	count_redirects(t_redirect **redirs)
 	return (i);
 }
 
-/**
- * cmd_add_redirect - Aggiunge una redirezione a un comando
- * @cmd: Il comando a cui aggiungere la redirezione
- * @redir: La redirezione da aggiungere
- * 
- * Espande l'array di redirezioni per includere la nuova redirezione.
- * La redirezione viene aggiunta in coda all'array.
- * 
- * Return: 1 in caso di successo, 0 in caso di errore
- */
+ 
 int	cmd_add_redirect(t_command *cmd, t_redirect *redir)
 {
 	int			i;

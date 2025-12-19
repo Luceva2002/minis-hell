@@ -39,19 +39,4 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	p[k] = '\0';
 	return (p);
 }
-/*#include <stdio.h>
-
-int main(void)
-{
-    char *s1 = "Hello, ";
-    char *s2 = "World!";
-    char *result = ft_strjoin(s1, s2);
-
-    if (result)
-    {
-        printf("Result: %s\n", result); // Output: "Hello, World!"
-        free(result); // Don't forget to free the memory!
-    }
-
-    return 0;
-}*/
+ 

@@ -47,18 +47,4 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	r[i] = '\0';
 	return (r);
 }
-/*
-int main(void)
-{
-    char *s = "Hello, World!";
-    char *sub;
-
-    sub = ft_substr(s, 7, 5);
-    printf("Substring: %s\n", sub); // Output: "World"
-
-    free(sub);
-      sub = ft_substr(s, 15, 5);
-    printf("Substring: %s\n", sub); // Output: ""
-    free(sub);
-    return 0;
-}*/
+ 

@@ -12,9 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-/**
- * builtin_pwd - Implementa il comando pwd
- */
+ 
 int	builtin_pwd(void)
 {
 	char	*cwd;
