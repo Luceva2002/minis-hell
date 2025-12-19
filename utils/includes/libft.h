@@ -18,7 +18,6 @@
 # include <string.h>
 # include <unistd.h>
 # include <stdint.h>
- 
 
 int		ft_atoi(const char *str);
 void	ft_bzero(void *s, size_t n);

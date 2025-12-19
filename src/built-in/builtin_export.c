@@ -12,7 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
 static void	print_sorted_env(t_shell_context *ctx)
 {
 	t_env	*env;
@@ -85,7 +84,6 @@ static int	export_single_var(char *arg, t_shell_context *ctx)
 	return (0);
 }
 
- 
 int	builtin_export(char **args, t_shell_context *ctx)
 {
 	int	i;

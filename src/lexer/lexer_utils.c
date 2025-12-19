@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 t_token	*token_create(t_token_type type, const char *value)
 {
 	t_token	*tok;
@@ -37,11 +32,6 @@ t_token	*token_create(t_token_type type, const char *value)
 	return (tok);
 }
 
- 
- 
- 
-
- 
 static int	token_array_count(t_token **tokens)
 {
 	int	count;
@@ -52,7 +42,6 @@ static int	token_array_count(t_token **tokens)
 	return (count);
 }
 
- 
 int	token_array_add(t_token ***tokens, t_token *tok)
 {
 	t_token	**new_arr;
@@ -77,11 +66,6 @@ int	token_array_add(t_token ***tokens, t_token *tok)
 	return (1);
 }
 
- 
- 
- 
-
- 
 void	token_array_free(t_token **tokens)
 {
 	int	i;

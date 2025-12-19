@@ -59,4 +59,3 @@ char	*ft_strtrim(char const *s1, char const *set)
 	r[j] = '\0';
 	return (r);
 }
- 

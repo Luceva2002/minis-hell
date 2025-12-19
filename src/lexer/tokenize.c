@@ -12,28 +12,17 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 static int	char_is_space(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n');
 }
 
- 
 static int	char_is_operator(char c)
 {
 	return (c == '|' || c == '<' || c == '>' || c == '&'
 		|| c == '(' || c == ')' || c == ';');
 }
 
- 
- 
- 
-
- 
 static t_token	*get_next_token(const char *s, int *i)
 {
 	t_token_type	type;
@@ -61,11 +50,6 @@ static t_token	*get_next_token(const char *s, int *i)
 	return (tok);
 }
 
- 
- 
- 
-
- 
 t_token	**tokenize(const char *input)
 {
 	t_token	**tokens;

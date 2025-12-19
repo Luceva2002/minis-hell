@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 static void	free_arguments(char **args)
 {
 	int	i;
@@ -29,7 +24,6 @@ static void	free_arguments(char **args)
 	free(args);
 }
 
- 
 static void	free_redirects(t_redirect **redirect)
 {
 	int	i;
@@ -47,7 +41,6 @@ static void	free_redirects(t_redirect **redirect)
 	free(redirect);
 }
 
- 
 static void	free_command(t_command *cmd)
 {
 	if (!cmd)
@@ -59,7 +52,6 @@ static void	free_command(t_command *cmd)
 	free(cmd);
 }
 
- 
 void	ast_node_free(t_ast_node *node)
 {
 	if (!node)

@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 void	syntax_print_error(int error_code)
 {
 	if (error_code == SYNTAX_UNCLOSED)

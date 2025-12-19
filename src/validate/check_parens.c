@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 int	syntax_check_parens(t_token **tokens)
 {
 	int	i;

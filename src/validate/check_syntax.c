@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 static int	has_unclosed_quote(const char *str)
 {
 	int		i;
@@ -41,11 +36,6 @@ static int	has_unclosed_quote(const char *str)
 	return (0);
 }
 
- 
- 
- 
-
- 
 int	syntax_validate(t_token **tokens)
 {
 	int	i;

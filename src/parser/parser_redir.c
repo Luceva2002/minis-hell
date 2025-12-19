@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 static int	count_redirects(t_redirect **redirs)
 {
 	int	i;
@@ -27,7 +22,6 @@ static int	count_redirects(t_redirect **redirs)
 	return (i);
 }
 
- 
 int	cmd_add_redirect(t_command *cmd, t_redirect *redir)
 {
 	int			i;

@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 int	builtin_env(t_shell_context *ctx)
 {
 	t_env	*env;

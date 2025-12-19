@@ -12,7 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
 int	builtin_unset(char **args, t_shell_context *ctx)
 {
 	int	i;

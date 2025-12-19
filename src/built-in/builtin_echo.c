@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 static int	is_n_flag(char *arg)
 {
 	int	i;
@@ -35,7 +30,6 @@ static int	is_n_flag(char *arg)
 	return (1);
 }
 
- 
 int	builtin_echo(char **args)
 {
 	int	i;

@@ -12,7 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
 int	builtin_pwd(void)
 {
 	char	*cwd;

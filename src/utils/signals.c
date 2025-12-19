@@ -23,7 +23,6 @@ void	handle_sigint(int sig)
 	rl_redisplay();
 }
 
- 
 static void	handle_sigint_heredoc(int sig)
 {
 	g_signal = sig;
@@ -31,11 +30,6 @@ static void	handle_sigint_heredoc(int sig)
 	close(STDIN_FILENO);
 }
 
- 
- 
- 
-
- 
 void	setup_signals(void)
 {
 	struct sigaction	sa_int;
@@ -51,14 +45,12 @@ void	setup_signals(void)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
- 
 void	setup_signals_child(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 }
 
- 
 void	setup_signals_heredoc(void)
 {
 	struct sigaction	sa_int;

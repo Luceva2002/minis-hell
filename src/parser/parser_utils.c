@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
- 
- 
- 
-
- 
 t_ast_node	*ast_node_create(t_node_type type)
 {
 	t_ast_node	*node;
@@ -31,7 +26,6 @@ t_ast_node	*ast_node_create(t_node_type type)
 	return (node);
 }
 
- 
 t_command	*cmd_node_create(void)
 {
 	t_command	*cmd;
@@ -45,11 +39,6 @@ t_command	*cmd_node_create(void)
 	return (cmd);
 }
 
- 
- 
- 
-
- 
 static int	count_arguments(char **args)
 {
 	int	i;
@@ -60,7 +49,6 @@ static int	count_arguments(char **args)
 	return (i);
 }
 
- 
 int	cmd_add_argument(t_command *cmd, char *arg)
 {
 	int		i;
