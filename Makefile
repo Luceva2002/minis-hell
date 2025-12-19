@@ -6,7 +6,7 @@
 #    By: luevange <luevange@student.42roma.it>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/26 18:40:00 by luevange          #+#    #+#              #
-#    Updated: 2025/11/10 15:28:14 by luevange         ###   ########.fr        #
+#    Updated: 2025/12/19 15:50:06 by luevange         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -144,7 +144,8 @@ bonus: all
 
 debug: CFLAGS += -g3 -fsanitize=address
 debug: re
-
+run:
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=readline.supp  ./$(NAME)
 valgrind: CFLAGS += -g3
 valgrind: re
 
@@ -152,4 +153,4 @@ valgrind: re
 #                                  PHONY                                       #
 # ============================================================================ #
 
-.PHONY: all clean fclean re bonus debug valgrind
+.PHONY: all clean fclean re bonus debug valgrind run
