@@ -106,5 +106,6 @@ int	main(int argc, char **argv, char **envp)
 		ft_putendl_fd("IGNORE_PROMPT", STDOUT_FILENO);
 	shell_loop(&ctx);
 	env_free(ctx.env);
+	clear_history();
 	return (ctx.last_exit_code);
 }

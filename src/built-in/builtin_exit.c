@@ -65,11 +65,13 @@ static int	is_numeric(char *str)
 	return (1);
 }
 
-static void	exit_error_numeric(char *arg)
+static void	exit_error_numeric(char *arg, t_shell_context *ctx)
 {
 	ft_putstr_fd("minishell: exit: ", 2);
 	ft_putstr_fd(arg, 2);
 	ft_putstr_fd(": numeric argument required\n", 2);
+	env_free(ctx->env);
+	clear_history();
 	exit(255);
 }
 
@@ -80,9 +82,13 @@ int	builtin_exit(char **args, t_shell_context *ctx)
 
 	ft_putendl_fd("exit", STDERR_FILENO);
 	if (!args[1])
+	{
+		env_free(ctx->env);
+		clear_history();
 		exit(ctx->last_exit_code);
+	}
 	if (!is_numeric(args[1]))
-		exit_error_numeric(args[1]);
+		exit_error_numeric(args[1], ctx);
 	if (args[2])
 	{
 		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
@@ -90,5 +96,7 @@ int	builtin_exit(char **args, t_shell_context *ctx)
 	}
 	exit_code = ft_atol(args[1]);
 	final_code = (unsigned char)(exit_code & 0xFF);
+	env_free(ctx->env);
+	clear_history();
 	exit(final_code);
 }

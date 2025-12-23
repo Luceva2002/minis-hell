@@ -10,24 +10,17 @@
 #                                                                              #
 # **************************************************************************** #
 
-# ============================================================================ #
-#                                  VARIABLES                                   #
-# ============================================================================ #
-
 NAME		= minishell
 
-# Compiler settings
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -g
 READLINE	= -lreadline
 
-# Directories
 SRC_DIR		= src
 OBJ_DIR		= obj
 UTILS_DIR	= utils
 INCLUDES	= -I./includes -I./$(UTILS_DIR)/includes
 
-# Source directories
 LEXER_DIR	= $(SRC_DIR)/lexer
 PARSER_DIR	= $(SRC_DIR)/parser
 VALIDATE_DIR = $(SRC_DIR)/validate
@@ -36,7 +29,6 @@ ENV_DIR		= $(SRC_DIR)/handle_env
 BUILTIN_DIR	= $(SRC_DIR)/built-in
 UTILS_SRC_DIR = $(SRC_DIR)/utils
 
-# Source files
 SRCS		= $(SRC_DIR)/minishell.c \
 			  $(LEXER_DIR)/lexer_utils.c \
 			  $(LEXER_DIR)/tokenize.c \
@@ -78,22 +70,14 @@ SRCS		= $(SRC_DIR)/minishell.c \
 			  $(UTILS_SRC_DIR)/signals.c \
 			  $(UTILS_SRC_DIR)/banner.c
 
-# Object files (tutti nella cartella obj/)
 OBJS		= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
 
-# Libraries
 LIBFT		= $(UTILS_DIR)/libft.a
-
-# Colors for pretty output
 GREEN		= \033[0;32m
 BLUE		= \033[0;34m
 YELLOW		= \033[0;33m
 RED			= \033[0;31m
 RESET		= \033[0m
-
-# ============================================================================ #
-#                                   RULES                                      #
-# ============================================================================ #
 
 all: $(NAME)
 
@@ -102,21 +86,15 @@ $(NAME): $(LIBFT) $(OBJS)
 	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(READLINE) -o $(NAME)
 	@echo "$(GREEN)✓ $(NAME) compiled successfully!$(RESET)"
 
-# Crea directory obj/ mantenendo la struttura delle sottocartelle
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@echo "$(YELLOW)Compiling $<...$(RESET)"
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-# Compila la libreria utils
 $(LIBFT):
 	@echo "$(BLUE)Building libft...$(RESET)"
 	@$(MAKE) -C $(UTILS_DIR)
 	@echo "$(GREEN)✓ libft compiled!$(RESET)"
-
-# ============================================================================ #
-#                                 CLEANUP                                      #
-# ============================================================================ #
 
 clean:
 	@echo "$(RED)Cleaning object files...$(RESET)"
@@ -132,15 +110,7 @@ fclean: clean
 
 re: fclean all
 
-# ============================================================================ #
-#                                  BONUS                                       #
-# ============================================================================ #
-
 bonus: all
-
-# ============================================================================ #
-#                                  DEBUG                                       #
-# ============================================================================ #
 
 debug: CFLAGS += -g3 -fsanitize=address
 debug: re
@@ -148,9 +118,5 @@ run:
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=readline.supp  ./$(NAME)
 valgrind: CFLAGS += -g3
 valgrind: re
-
-# ============================================================================ #
-#                                  PHONY                                       #
-# ============================================================================ #
 
 .PHONY: all clean fclean re bonus debug valgrind run

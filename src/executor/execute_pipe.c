@@ -41,15 +41,6 @@ static void	execute_right_pipe(t_ast_node *node, int pipe_fd[2],
 	exit(execute(node->right, ctx));
 }
 
-static int	handle_pipe_signal(int status)
-{
-	if (WTERMSIG(status) == SIGINT)
-		return (write(1, "\n", 1), 130);
-	if (WTERMSIG(status) == SIGQUIT)
-		return (ft_putendl_fd("Quit: 3", 2), 131);
-	return (128 + WTERMSIG(status));
-}
-
 static int	wait_pipe_children(pid_t left, pid_t right)
 {
 	int	status;
@@ -57,31 +48,53 @@ static int	wait_pipe_children(pid_t left, pid_t right)
 	waitpid(left, &status, 0);
 	waitpid(right, &status, 0);
 	if (WIFSIGNALED(status))
-		return (handle_pipe_signal(status));
+	{
+		if (WTERMSIG(status) == SIGINT)
+			return (write(1, "\n", 1), 130);
+		if (WTERMSIG(status) == SIGQUIT)
+			return (ft_putendl_fd("Quit: 3", 2), 131);
+		return (128 + WTERMSIG(status));
+	}
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	return (1);
 }
 
+static int	create_children(t_ast_node *node, t_shell_context *ctx,
+		int pipe_fd[2], pid_t *pids)
+{
+	pids[0] = fork();
+	if (pids[0] < 0)
+	{
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		return (perror("fork"), 1);
+	}
+	if (pids[0] == 0)
+		execute_left_pipe(node, pipe_fd, ctx);
+	pids[1] = fork();
+	if (pids[1] < 0)
+	{
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		waitpid(pids[0], NULL, 0);
+		return (perror("fork"), 1);
+	}
+	if (pids[1] == 0)
+		execute_right_pipe(node, pipe_fd, ctx);
+	return (0);
+}
+
 int	execute_pipe(t_ast_node *node, t_shell_context *ctx)
 {
 	int		pipe_fd[2];
-	pid_t	pid_left;
-	pid_t	pid_right;
+	pid_t	pids[2];
 
 	if (pipe(pipe_fd) < 0)
 		return (perror("pipe"), 1);
-	pid_left = fork();
-	if (pid_left < 0)
-		return (perror("fork"), 1);
-	if (pid_left == 0)
-		execute_left_pipe(node, pipe_fd, ctx);
-	pid_right = fork();
-	if (pid_right < 0)
-		return (perror("fork"), 1);
-	if (pid_right == 0)
-		execute_right_pipe(node, pipe_fd, ctx);
+	if (create_children(node, ctx, pipe_fd, pids))
+		return (1);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
-	return (wait_pipe_children(pid_left, pid_right));
+	return (wait_pipe_children(pids[0], pids[1]));
 }

@@ -77,6 +77,8 @@ void	token_array_free(t_token **tokens)
 	{
 		if (tokens[i]->value)
 			free(tokens[i]->value);
+		if (tokens[i]->content)
+			free(tokens[i]->content);
 		free(tokens[i]);
 		i++;
 	}
